@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Autotest Platform</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="p-4">
+    <h1>Autotest Platform</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Название теста</label>
+            <input type="text" name="test_name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Загрузить файл (.py)</label>
+            <input type="file" name="test_file" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Или введите тест вручную</label>
+            <textarea name="code_area" class="form-control" rows="10"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Запустить тест</button>
+    </form>
+    <hr>
+    <h3>История запусков</h3>
+    <ul class="list-group">
+        {% for run in runs %}pip install pytest pytest-html
+
+        <li class="list-group-item">
+            {{ run.created_at }} — <strong>{{ run.name }}</strong> — {{ run.status }}
+            <a href="/{{ run.log_path }}" target="_blank" class="btn btn-sm btn-secondary float-end ms-2">Лог</a>
+            <a href="/reports/{{ run.name }}.html" target="_blank" class="btn btn-sm btn-info float-end">HTML отчёт</a>
+        </li>
+        {% empty %}
+        <li class="list-group-item">Нет запусков</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

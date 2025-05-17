@@ -1,0 +1,14 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.0rc2, pytest-8.3.5, pluggy-1.5.0
+rootdir: C:\Users\89021\PycharmProjects\dip_project_2025
+plugins: allure-pytest-2.13.5, html-4.1.1, metadata-3.1.1
+collected 0 items / 1 error
+
+=================================== ERRORS ====================================
+__________________ ERROR collecting uploaded_tests/test 1.py __________________
+..\\..\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\_pytest\\python.py:493: in importtestmodule\n    mod = import_path(\n..\\..\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\_pytest\\pathlib.py:587: in import_path\n    importlib.import_module(module_name)\n..\\..\\AppData\\Local\\Programs\\Python\\Python310\\lib\\importlib\\__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n<frozen importlib._bootstrap>:1050: in _gcd_import\n    ???\n<frozen importlib._bootstrap>:1027: in _find_and_load\n    ???\n<frozen importlib._bootstrap>:1006: in _find_and_load_unlocked\n    ???\n<frozen importlib._bootstrap>:688: in _load_unlocked\n    ???\n..\\..\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\_pytest\\assertion\\rewrite.py:176: in exec_module\n    source_stat, co = _rewrite_test(fn, self.config)\n..\\..\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\_pytest\\assertion\\rewrite.py:356: in _rewrite_test\n    tree = ast.parse(source, filename=strfn)\n..\\..\\AppData\\Local\\Programs\\Python\\Python310\\lib\\ast.py:50: in parse\n    return compile(source, filename, mode, flags,\nE     File "C:\\Users\\89021\\PycharmProjects\\dip_project_2025\\uploaded_tests\\test 1.py", line 19\nE       assert b"\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd" in response.content  # \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd home.html\nE                                            ^\nE   SyntaxError: bytes can only contain ASCII literal characters
+- Generated html report: file:///C:/Users/89021/PycharmProjects/dip_project_2025/reports/test%201.html -
+=========================== short test summary info ===========================
+ERROR uploaded_tests/test 1.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+============================== 1 error in 0.63s ===============================
