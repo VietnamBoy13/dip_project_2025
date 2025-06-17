@@ -1,0 +1,157 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.0rc2, pytest-8.3.5, pluggy-1.5.0
+rootdir: C:\Users\89021\PycharmProjects\dip_project_2025
+plugins: allure-pytest-2.13.5, html-4.1.1, metadata-3.1.1
+collected 1 item
+
+uploaded_tests\test1_Tr5fICu.py F                                        [100%]
+
+================================== FAILURES ===================================
+_______________________________ test_navigation _______________________________
+
+    def test_navigation():
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")  # запуск без GUI
+        driver = webdriver.Chrome(options=chrome_options)  # укажите путь к chromedriver, если нужно
+    
+        try:
+>           driver.get("https://tutorial.djangogirls.org/ru/")
+
+uploaded_tests\test1_Tr5fICu.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\AppData\Local\Programs\Python\Python310\lib\site-packages\selenium\webdriver\remote\webdriver.py:454: in get
+    self.execute(Command.GET, {"url": url})
+..\..\AppData\Local\Programs\Python\Python310\lib\site-packages\selenium\webdriver\remote\webdriver.py:429: in execute
+    self.error_handler.check_response(response)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selenium.webdriver.remote.errorhandler.ErrorHandler object at 0x0000016187219BA0>
+response = {'status': 404, 'value': '{"value":{"error":"invalid session id","message":"invalid session id: session deleted as the...7350BA79+4825]\\n\\tBaseThreadInitThunk [0x00007FFE62D5259D+29]\\n\\tRtlUserThreadStart [0x00007FFE63E6AF58+40]\\n"}}'}
+
+    def check_response(self, response: Dict[str, Any]) -> None:
+        """Checks that a JSON response from the WebDriver does not have an
+        error.
+    
+        :Args:
+         - response - The JSON response from the WebDriver server as a dictionary
+           object.
+    
+        :Raises: If the response contains an error message.
+        """
+        status = response.get("status", None)
+        if not status or status == ErrorCode.SUCCESS:
+            return
+        value = None
+        message = response.get("message", "")
+        screen: str = response.get("screen", "")
+        stacktrace = None
+        if isinstance(status, int):
+            value_json = response.get("value", None)
+            if value_json and isinstance(value_json, str):
+                import json
+    
+                try:
+                    value = json.loads(value_json)
+                    if len(value) == 1:
+                        value = value["value"]
+                    status = value.get("error", None)
+                    if not status:
+                        status = value.get("status", ErrorCode.UNKNOWN_ERROR)
+                        message = value.get("value") or value.get("message")
+                        if not isinstance(message, str):
+                            value = message
+                            message = message.get("message")
+                    else:
+                        message = value.get("message", None)
+                except ValueError:
+                    pass
+    
+        exception_class: Type[WebDriverException]
+        e = ErrorCode()
+        error_codes = [item for item in dir(e) if not item.startswith("__")]
+        for error_code in error_codes:
+            error_info = getattr(ErrorCode, error_code)
+            if isinstance(error_info, list) and status in error_info:
+                exception_class = getattr(ExceptionMapping, error_code, WebDriverException)
+                break
+        else:
+            exception_class = WebDriverException
+    
+        if not value:
+            value = response["value"]
+        if isinstance(value, str):
+            raise exception_class(value)
+        if message == "" and "message" in value:
+            message = value["message"]
+    
+        screen = None  # type: ignore[assignment]
+        if "screen" in value:
+            screen = value["screen"]
+    
+        stacktrace = None
+        st_value = value.get("stackTrace") or value.get("stacktrace")
+        if st_value:
+            if isinstance(st_value, str):
+                stacktrace = st_value.split("\n")
+            else:
+                stacktrace = []
+                try:
+                    for frame in st_value:
+                        line = frame.get("lineNumber", "")
+                        file = frame.get("fileName", "<anonymous>")
+                        if line:
+                            file = f"{file}:{line}"
+                        meth = frame.get("methodName", "<anonymous>")
+                        if "className" in frame:
+                            meth = f"{frame['className']}.{meth}"
+                        msg = "    at %s (%s)"
+                        msg = msg % (meth, file)
+                        stacktrace.append(msg)
+                except TypeError:
+                    pass
+        if exception_class == UnexpectedAlertPresentException:
+            alert_text = None
+            if "data" in value:
+                alert_text = value["data"].get("text")
+            elif "alert" in value:
+                alert_text = value["alert"].get("text")
+            raise exception_class(message, screen, stacktrace, alert_text)  # type: ignore[call-arg]  # mypy is not smart enough here
+>       raise exception_class(message, screen, stacktrace)
+E       selenium.common.exceptions.InvalidSessionIdException: Message: invalid session id: session deleted as the browser has closed the connection
+E       from disconnected: Unable to receive message from renderer
+E         (Session info: chrome=137.0.7151.104)
+E       Stacktrace:
+E       	GetHandleVerifier [0x00007FF67351CF65+75717]
+E       	GetHandleVerifier [0x00007FF67351CFC0+75808]
+E       	(No symbol) [0x00007FF6732E8F9A]
+E       	(No symbol) [0x00007FF6732D64EC]
+E       	(No symbol) [0x00007FF6732D61DA]
+E       	(No symbol) [0x00007FF6732D3E8A]
+E       	(No symbol) [0x00007FF6732D465C]
+E       	(No symbol) [0x00007FF6732ECF3A]
+E       	(No symbol) [0x00007FF67339013E]
+E       	(No symbol) [0x00007FF67336737A]
+E       	(No symbol) [0x00007FF67338F39C]
+E       	(No symbol) [0x00007FF673367153]
+E       	(No symbol) [0x00007FF673330421]
+E       	(No symbol) [0x00007FF6733311B3]
+E       	GetHandleVerifier [0x00007FF67381D74D+3223469]
+E       	GetHandleVerifier [0x00007FF673817CF2+3200338]
+E       	GetHandleVerifier [0x00007FF673835B23+3322755]
+E       	GetHandleVerifier [0x00007FF673536A3A+180890]
+E       	GetHandleVerifier [0x00007FF67353E13F+211359]
+E       	GetHandleVerifier [0x00007FF6735252B4+109332]
+E       	GetHandleVerifier [0x00007FF673525462+109762]
+E       	GetHandleVerifier [0x00007FF67350BA79+4825]
+E       	BaseThreadInitThunk [0x00007FFE62D5259D+29]
+E       	RtlUserThreadStart [0x00007FFE63E6AF58+40]
+
+..\..\AppData\Local\Programs\Python\Python310\lib\site-packages\selenium\webdriver\remote\errorhandler.py:232: InvalidSessionIdException
+------------------------------ Captured log call ------------------------------
+WARNING  selenium.webdriver.common.selenium_manager:selenium_manager.py:138 Exception managing chrome: error sending request for url (https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json)
+WARNING  selenium.webdriver.common.selenium_manager:selenium_manager.py:138 The chromedriver version (136.0.7103.94) detected in PATH at C:\webDriver\chromedriver.exe might not be compatible with the detected chrome version (137.0.7151.104); currently, chromedriver  is recommended for chrome 137.*, so it is advised to delete the driver in PATH and retry
+WARNING  selenium.webdriver.common.selenium_manager:selenium_manager.py:138 Error sending stats to Plausible: error sending request for url (https://plausible.io/api/event)
+- Generated html report: file:///C:/Users/89021/PycharmProjects/dip_project_2025/reports/%D1%84%D0%B4%D1%8B.html -
+=========================== short test summary info ===========================
+FAILED uploaded_tests/test1_Tr5fICu.py::test_navigation - selenium.common.exc...
+============================= 1 failed in 21.25s ==============================

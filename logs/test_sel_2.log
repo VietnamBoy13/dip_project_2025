@@ -1,0 +1,10 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.0rc2, pytest-8.3.5, pluggy-1.5.0
+rootdir: C:\Users\89021\PycharmProjects\dip_project_2025
+plugins: allure-pytest-2.13.5, html-4.1.1, metadata-3.1.1
+collected 1 item
+
+uploaded_tests\test1_vMSU751.py .                                        [100%]
+
+- Generated html report: file:///C:/Users/89021/PycharmProjects/dip_project_2025/reports/test_sel_2.html -
+============================= 1 passed in 12.24s ==============================
