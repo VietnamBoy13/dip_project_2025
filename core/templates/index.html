@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>TestPilot — Тестирование в облаке</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}"/>
+</head>
+<body>
+<header class="header">
+    <img src="{% static 'img/logo.svg' %}" alt="TestPilot logo" class="logo"/>
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Выйти</button>
+    </form>
+    <a href="{% url 'home' %}" class="btn-primary">Тесты</a>
+    {% else %}
+    <a href="{% url 'auth' %}" class="btn-primary">Вход</a>
+    {% endif %}
+</header>
+
+<main class="main-block">
+    <section class="hero">
+        <h1>Тестирование в облаке</h1>
+        <p>Тестируйте разумно и отправляйте быстрее. Предоставляйте непревзойдённые цифровые возможности для реальных
+            предприятий.</p>
+        <div class="hero-buttons">
+            <a href="{% url 'auth' %}" class="btn-google"><img src="{% static 'img/gog.svg' %}" alt="Google"/>Начни
+                бесплатно с Google</a>
+            <a href="{% url 'auth' %}" class="btn-outlined">Начни бесплатно с Email</a>
+        </div>
+        <p class="trusted">Trusted by 2M+ users globally</p>
+        <div class="partners">
+            <img src="{% static 'img/Microsoft.svg' %}" alt="Microsoft"/>
+            <img src="{% static 'img/vimeo.svg' %}" alt="vimeo"/>
+            <img src="{% static 'img/nvidia.svg' %}" alt="NVIDIA"/>
+            <img src="{% static 'img/telstra.svg' %}" alt="Telstra"/>
+            <img src="{% static 'img/rubrik.svg' %}" alt="Rubrik"/>
+        </div>
+    </section>
+
+    <section class="demo-block">
+        <img class="demo-card" src="{% static 'img/demo-block.png' %}" alt=""/>
+    </section>
+</main>
+</body>
+</html>

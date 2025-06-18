@@ -137,3 +137,5 @@ LOGS_ROOT = os.path.join(BASE_DIR, 'logs')
 
 # URL, по которому будут доступны отчёты
 LOGS_URL = '/logs/'
+
+AUTH_USER_MODEL = 'core.User'

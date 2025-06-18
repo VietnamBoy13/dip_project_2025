@@ -1,42 +1,50 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Autotest Platform</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
 </head>
 <body class="p-4">
-    <h1>Autotest Platform</h1>
-    <a href="{% url 'run_demo_test' %}" class="btn btn-primary mb-3">Запустить демо-тест</a>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label class="form-label">Название теста</label>
-            <input type="text" name="test_name" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Загрузить файл (.py)</label>
-            <input type="file" name="test_file" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Или введите тест вручную</label>
-            <textarea name="code_area" class="form-control" rows="10"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Запустить тест</button>
-    </form>
-    <hr>
-    <h3>История запусков</h3>
-    <ul class="list-group">
-        {% for run in runs %}
+<header class="header">
+    <img src="{% static 'img/logo.svg' %}" alt="TestPilot logo" class="logo"/>
+    {% if user.is_authenticated %}
+    <a href="{% url 'index' %}" class="btn-primary">Главная страница</a>
+    {% else %}
+    <a href="{% url 'auth' %}" class="btn-primary">Вход</a>
+    {% endif %}
+</header>
+<a href="{% url 'run_demo_test' %}" class="btn btn-primary mb-3">Запустить демо-тест</a>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Название теста</label>
+        <input type="text" name="test_name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Загрузить файл (.py)</label>
+        <input type="file" name="test_file" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Или введите тест вручную</label>
+        <textarea name="code_area" class="form-control" rows="10"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Запустить тест</button>
+</form>
+<hr>
+<h3>История запусков</h3>
+<ul class="list-group">
+    {% for run in runs %}
 
-        <li class="list-group-item">
-            {{ run.created_at }} — <strong>{{ run.name }}</strong> — {{ run.status }}
-            <a href="/{{ run.log_path }}" target="_blank" class="btn btn-sm btn-secondary float-end ms-2">Лог</a>
-            <a href="{% url 'report' run.id %}" class="btn btn-sm btn-info float-end">HTML отчёт</a>
-        </li>
-        {% empty %}
-        <li class="list-group-item">Нет запусков</li>
-        {% endfor %}
-    </ul>
+    <li class="list-group-item">
+        {{ run.run_at }} — <strong>{{ run.test.name }}</strong> — {{ run.status }}
+        <a href="/{{ run.log_path }}" target="_blank" class="btn btn-sm btn-secondary float-end ms-2">Лог</a>
+        <a href="{% url 'report' run.id %}" class="btn btn-sm btn-info float-end">HTML отчёт</a>
+    </li>
+    {% empty %}
+    <li class="list-group-item">Нет запусков</li>
+    {% endfor %}
+</ul>
 </body>
 </html>

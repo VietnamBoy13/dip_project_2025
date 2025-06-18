@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>TestPilot — Авторизация / Регистрация</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+<body>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <img src="{% static 'img/logo.svg' %}" alt="TestPilot" class="logo" />
+
+        <div class="tabs">
+            <button type="button" class="tab-btn active" data-tab="login">Вход</button>
+            <button type="button" class="tab-btn" data-tab="register">Регистрация</button>
+        </div>
+
+        <form id="login" class="tab-content active" method="post" action="">
+            {% csrf_token %}
+            {{ login_form.username }}
+            {{ login_form.password }}
+            <button type="submit" name="login" class="btn-primary">Войти</button>
+        </form>
+
+        <form id="register" class="tab-content" method="post" action="">
+            {% csrf_token %}
+            {{ register_form.first_name }}
+            {{ register_form.email }}
+            {{ register_form.password1 }}
+            {{ register_form.password2 }}
+            <button type="submit" name="register" class="btn-primary">Зарегистрироваться</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.tab-content').forEach(form => form.classList.remove('active'));
+            document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

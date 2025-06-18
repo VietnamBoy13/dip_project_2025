@@ -1,14 +1,22 @@
-import os, subprocess
+import os
+import subprocess
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
-from .models import TestRun
+from .models import Test, TestCase, TestResult, User
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 import time
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate, logout
+from .forms import CustomLoginForm, CustomUserCreationForm
 
+def index(request):
+    return render(request, 'index.html')
+
+@login_required
 def home(request):
     if request.method == 'POST':
         name = request.POST.get('test_name', 'uploaded_test')
@@ -47,35 +55,50 @@ def home(request):
             ], stdout=log, stderr=log)
 
         status = "success" if result.returncode == 0 else "fail"
-        TestRun.objects.create(name=name, status=status, log_path=log_file)
+
+        # Попробуем найти Test с таким именем или создадим (если нужно)
+        test_obj, created = Test.objects.get_or_create(name=name, defaults={'created_by': request.user})
+
+        # Создаём запись результата теста
+        TestResult.objects.create(
+            test=test_obj,
+            user=request.user,
+            status=status,
+            report_path=report_file,
+        )
 
         return redirect('home')
 
-    runs = TestRun.objects.all().order_by('-created_at')
+    # Показываем все результаты запусков, последние сверху
+    runs = TestResult.objects.all().order_by('-run_at')
     return render(request, 'home.html', {'runs': runs})
 
 
+@login_required
 def report_view(request, run_id):
-    run = get_object_or_404(TestRun, id=run_id)
-    # читаем лог
+    run = get_object_or_404(TestResult, id=run_id)
     try:
-        with open(os.path.join(settings.BASE_DIR, run.log_path), encoding='utf-8') as f:
+        with open(os.path.join(settings.BASE_DIR, run.report_path), encoding='utf-8') as f:
+            report_content = f.read()
+    except Exception:
+        report_content = "Не удалось прочитать отчет."
+
+    try:
+        with open(os.path.join(settings.BASE_DIR, run.report_path.replace('.html', '.log')), encoding='utf-8') as f:
             log_content = f.read()
     except Exception:
         log_content = "Не удалось прочитать лог."
 
     return render(request, 'reports/report_template.html', {
         'run': run,
-        'log_content': log_content
+        'report_content': report_content,
+        'log_content': log_content,
     })
-def run_demo_test(request):
-    # Настройки headless-браузера (без GUI)
-    chrome_options = Options()
-    # chrome_options.add_argument("--headless")
-    # chrome_options.add_argument("--no-sandbox")
-    # chrome_options.add_argument("--disable-dev-shm-usage")
 
-    driver = webdriver.Chrome(options=chrome_options)  # Укажите путь, если нужно
+
+def run_demo_test(request):
+    chrome_options = Options()
+    driver = webdriver.Chrome(options=chrome_options)
 
     test_result = {
         'passed': False,
@@ -87,10 +110,8 @@ def run_demo_test(request):
         driver.get("https://tutorial.djangogirls.org/ru/")
         test_result['log'] += "Открыта главная страница.\n"
 
-        # Ждём немного, чтобы страница прогрузилась
         time.sleep(2)
 
-        # Находим кнопку по XPath
         button = driver.find_element("xpath", "/html/body/div/div[1]/nav/ul/li[11]")
         test_result['log'] += "Кнопка найдена.\n"
 
@@ -116,3 +137,28 @@ def run_demo_test(request):
         driver.quit()
 
     return render(request, "demo_test_result.html", {'result': test_result})
+
+def auth_view(request):
+    if request.method == 'POST':
+        if 'login' in request.POST:
+            login_form = CustomLoginForm(request, data=request.POST)
+            register_form = CustomUserCreationForm()
+            if login_form.is_valid():
+                user = login_form.get_user()
+                login(request, user)
+                return redirect('index')
+        elif 'register' in request.POST:
+            register_form = CustomUserCreationForm(request.POST)
+            login_form = CustomLoginForm()
+            if register_form.is_valid():
+                user = register_form.save()
+                login(request, user)
+                return redirect('home')
+    else:
+        login_form = CustomLoginForm()
+        register_form = CustomUserCreationForm()
+
+    return render(request, 'auth.html', {
+        'login_form': login_form,
+        'register_form': register_form
+    })
