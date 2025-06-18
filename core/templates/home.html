@@ -7,6 +7,7 @@
 </head>
 <body class="p-4">
     <h1>Autotest Platform</h1>
+    <a href="{% url 'run_demo_test' %}" class="btn btn-primary mb-3">Запустить демо-тест</a>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-3">
@@ -26,12 +27,12 @@
     <hr>
     <h3>История запусков</h3>
     <ul class="list-group">
-        {% for run in runs %}pip install pytest pytest-html
+        {% for run in runs %}
 
         <li class="list-group-item">
             {{ run.created_at }} — <strong>{{ run.name }}</strong> — {{ run.status }}
             <a href="/{{ run.log_path }}" target="_blank" class="btn btn-sm btn-secondary float-end ms-2">Лог</a>
-            <a href="/reports/{{ run.name }}.html" target="_blank" class="btn btn-sm btn-info float-end">HTML отчёт</a>
+            <a href="{% url 'report' run.id %}" class="btn btn-sm btn-info float-end">HTML отчёт</a>
         </li>
         {% empty %}
         <li class="list-group-item">Нет запусков</li>
